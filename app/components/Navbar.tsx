@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 import React from 'react'
 import {RxHamburgerMenu} from 'react-icons/rx'
 import {AiOutlineClose} from 'react-icons/ai'
@@ -7,11 +7,11 @@ type Props = {}
 
 const Navbar = (props: Props) => {
 
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+    // const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen)
-    }
+    // const toggleMenu = () => {
+    //     setIsMenuOpen(!isMenuOpen)
+    // }
 
   return (
     <nav className="w-screen bg-teal-500 h-fit overflow-hidden">
@@ -33,7 +33,7 @@ const Navbar = (props: Props) => {
                     <div className="w-0 group-hover:w-full h-0.5 bg-white ease-in-out duration-500"></div>
                 </span>
             </div>
-            <div className="md:hidden flex items-center text-xl">
+            {/* <div className="md:hidden flex items-center text-xl">
                 {
                     window.innerWidth < 768 ? (
                         isMenuOpen ? (
@@ -49,7 +49,7 @@ const Navbar = (props: Props) => {
                 <span>Services</span>
                 <span>About</span>
                 <span>Contact</span>
-            </div>
+            </div> */}
         </div>
     </nav>
   )

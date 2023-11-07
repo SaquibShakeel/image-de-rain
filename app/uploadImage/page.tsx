@@ -1,11 +1,9 @@
-import React from 'react'
-
-type Props = {}
+import React from "react";
+import UploadImagePage from "../pages/UploadImagePage";
+type Props = {};
 
 const page = (props: Props) => {
-  return (
-    <div>page</div>
-  )
-}
+	return <UploadImagePage />;
+};
 
-export default page
+export default page;
