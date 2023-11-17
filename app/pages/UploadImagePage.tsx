@@ -27,7 +27,7 @@ const UploadImagePage = (props: Props) => {
 		}
 	};
 	return (
-		<div className="bg-[#f5f5fa] w-screen h-[90vh]">
+		<div className="bg-gradient-to-r from-white to-[#bcd5e3] w-screen h-[90vh]">
 			<div className="flex flex-col items-center justify-center h-full w-full">
 				{loading && <Spinner />}
 				{
