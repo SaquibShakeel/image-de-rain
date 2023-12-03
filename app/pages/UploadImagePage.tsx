@@ -3,12 +3,15 @@ import React, { useRef, useState } from "react";
 import { storage } from "../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Spinner from "../components/Spinner";
+import axios from "axios";
+import { set } from "firebase/database";
 
 type Props = {};
 
 const UploadImagePage = (props: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [imageUrl, setImageUrl] = useState<string>("");
+	const [derainedImageUrl, setDerainedImageUrl] = useState<string>("");
 	const uploadImageFunction = async (fileList: FileList) => {
 		const file = fileList[0];
 		console.log("file: ", file);
@@ -18,7 +21,6 @@ const UploadImagePage = (props: Props) => {
 		try {
 			const res = await uploadBytes(storageRef, file);
 			const downloadUrl = await getDownloadURL(storageRef);
-			console.log("res: ", downloadUrl);
 			setImageUrl(downloadUrl);
 		} catch (error) {
 			console.log("error: ", error);
@@ -26,19 +28,76 @@ const UploadImagePage = (props: Props) => {
 			setLoading(false);
 		}
 	};
+
+	const derainImage = async () => {
+		setLoading(true);
+		const response = await axios.post("http://127.0.0.1:5000/derain", {
+			url: imageUrl,
+		});
+		const base64String = response.data.image;
+		setDerainedImageUrl(`data:image/png;base64,${base64String}`);
+		// const binaryData = atob(base64String);
+		// const blob = new Blob([binaryData], { type: "image/png" });
+		// const blobUrl = URL.createObjectURL(blob);
+		// console.log("blobUrl: ", blobUrl);
+		setLoading(false);
+	};
+
 	return (
 		<div className="bg-gradient-to-r from-white to-[#bcd5e3] w-screen h-[90vh]">
 			<div className="flex flex-col items-center justify-center h-full w-full">
 				{loading && <Spinner />}
 				{
 					// If there is an image, show it
-					!loading && imageUrl && (
+					!loading && imageUrl && !derainedImageUrl && (
 						<div className="flex flex-col items-center justify-center w-[50%]">
 							<img
-								className="w-full h-auto"
+								className="w-96 h-auto"
 								src={imageUrl}
 								alt="Uploaded image"
 							/>
+							<div className="flex flex-col items-center justify-center w-full mt-4">
+								{/* // style the label button */}
+								<label
+									htmlFor="file_input"
+									className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md cursor-pointer hover:bg-gray-700">
+									Change Image
+								</label>
+								<button
+									onClick={derainImage}
+									className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md cursor-pointer hover:bg-gray-700 mt-5">
+									Generate De-rained Image
+								</button>
+								<input
+									className="hidden"
+									id="file_input"
+									type="file"
+									onChange={(e) => {
+										if (!e.target.files) return;
+										uploadImageFunction(e.target.files);
+										setDerainedImageUrl("");
+									}}
+								/>
+							</div>
+						</div>
+					)
+				}
+				{
+					// If there is a derained image, show it
+					!loading && derainedImageUrl && imageUrl && (
+						<div className="flex flex-col items-center justify-center w-[50%]">
+							<div className="flex gap-3">
+								<img
+									className="w-1/2 h-auto"
+									src={imageUrl}
+									alt="Uploaded image"
+								/>
+								<img
+									className="w-1/2 h-auto"
+									src={derainedImageUrl}
+									alt="Uploaded image"
+								/>
+							</div>
 							<div className="flex flex-col items-center justify-center w-full mt-4">
 								{/* // style the label button */}
 								<label
@@ -53,6 +112,7 @@ const UploadImagePage = (props: Props) => {
 									onChange={(e) => {
 										if (!e.target.files) return;
 										uploadImageFunction(e.target.files);
+										setDerainedImageUrl("");
 									}}
 								/>
 							</div>
